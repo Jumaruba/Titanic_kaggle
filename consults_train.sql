@@ -24,15 +24,27 @@ ORDER BY Porcentage DESC;
 # Classes A has 46
 # null classes have 30 % of survival
 
-SELECT SUM(Survived) as Survivals, COUNT(PassengerID) as ID, Sex, (SUM(Survived)/COUNT(PassengerId)) as Porcentage
+SELECT SUM(Survived) as Survivals, COUNT(PassengerID) as ID, Sex, (SUM(Survived)/COUNT(PassengerId)) as Percentage
 FROM train
 GROUP BY Sex
-ORDER BY Porcentage DESC
+ORDER BY Percentage DESC
 # 74% of the woman survived
 
-SELECT Pclass, SUM(Survived), COUNT(PassengerId), (SUM(Survived)/COUNT(PassengerId)) as Porcentage
+SELECT Pclass, SUM(Survived), COUNT(PassengerId), (SUM(Survived)/COUNT(PassengerId)) as Percentage
 FROM train
 GROUP BY Pclass
-ORDER BY Porcentage DESC
+ORDER BY Percentage DESC
 # People with higher class tends to survival
+
+SELECT Age, SUM(Survived), COUNT(PassengerId), (SUM(Survived)/COUNT(PassengerId)) as Percentage
+FROM train
+GROUP BY Age
+ORDER BY Age DESC;
+
+SELECT Embarked, SUM(Survived), COUNT(PassengerId), (SUM(Survived)/COUNT(PassengerId)) as Percentage
+FROM train
+GROUP BY Embarked
+ORDER BY Percentage
+
+
 
