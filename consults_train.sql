@@ -1,3 +1,14 @@
+SELECT COUNT(PassengerId) FROM train WHERE Pclass IS NULL;
+SELECT COUNT(PassengerId) FROM train WHERE Name IS NULL;
+SELECT COUNT(PassengerId) FROM train WHERE sex IS NULL;
+SELECT COUNT(PassengerId) FROM train WHERE age IS NULL; # it can be null
+SELECT COUNT(PassengerId) FROM train WHERE SibSp IS NULL;
+SELECT COUNT(PassengerId) FROM train WHERE Parch IS NULL;
+SELECT COUNT(PassengerId) FROM train WHERE Ticket IS NULL;
+SELECT COUNT(PassengerId) FROM train WHERE Fare IS NULL or Fare = 0; # can be 0
+SELECT COUNT(PassengerId) FROM train WHERE Cabin IS NULL; # can be null
+SELECT COUNT(PassengerId) FROM train WHERE Embarked IS NULL; # can be null
+
 SELECT SUM(Survived), SibSp
 FROM train
 GROUP BY SibSp

@@ -10,6 +10,9 @@ test_result = pd.read_csv("data/gender_submission.csv")
 
 
 def data_study():
+    print(train
+          ['Cabin'].isnull().sum())
+    print(train['Age'].mean())
     corr = train.corr()
     heat = sns.heatmap(corr, cmap=sns.diverging_palette(20, 220, n=200))
     plt.savefig("graphics/heat_map.png")
@@ -62,20 +65,24 @@ def data_clean():
         table["Fare"] = table["Fare"].fillna(table["Fare"].mean())
         table.drop(["Cabin", "Embarked", "Parch", "Sex", "Pclass", "SibSp"], axis=1, inplace=True)
         # drop for now
-        table.drop(["Name", "Ticket", "PassengerId"], axis=1, inplace=True)
+        table.drop(["Name", "Ticket"], axis=1, inplace=True)
 
 
 def model():
-    test_result.drop(["PassengerId"], axis=1, inplace=True)
-    train_x = train[train.columns[1:]]
-    train_y = train[train.columns[:1]]
-    test_x = test[test.columns[:]]
-    test_y = test_result[test_result.columns[:]]
+    train_x = train[train.columns[2:]]
+    train_y = train[train.columns[1:2]]
+    test_x = test[test.columns[1:]]
+    test_y = test_result[test_result.columns[1:]]
     model = LinearRegression().fit(train_x, train_y)
-    prediction_1 = model.predict(test_x)
+    prediction_1 = pd.DataFrame(model.predict(test_x), columns=['Survived'])
+    prediction_1 = prediction_1.round()
+    frames = [prediction_1, test[test.columns[:1]]]
+    result = frames[1].merge(frames[0], left_index=True, right_index=True)
+    result = result.astype({'Survived': 'int'})
+    result.to_csv("result_1.csv", index=False)
     print(model.score(test_x, test_y))
 
 
-data_clean()
 data_study()
-# model()
+data_clean()
+model()
