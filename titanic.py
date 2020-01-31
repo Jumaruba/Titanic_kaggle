@@ -12,7 +12,6 @@ test_result = pd.read_csv("data/gender_submission.csv")
 def data_study():
     corr = train.corr()
     heat = sns.heatmap(corr, cmap=sns.diverging_palette(20, 220, n=200))
-    plt.show()
     plt.savefig("graphics/heat_map.png")
 
 
