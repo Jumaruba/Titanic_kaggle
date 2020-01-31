@@ -9,6 +9,13 @@ test = pd.read_csv("data/test.csv")
 test_result = pd.read_csv("data/gender_submission.csv")
 
 
+def data_study():
+    corr = train.corr()
+    heat = sns.heatmap(corr, cmap=sns.diverging_palette(20, 220, n=200))
+    plt.show()
+    plt.savefig("graphics/heat_map.png")
+
+
 # conclusion: NA values: Age, Cabin, Embarked, Fare
 # setting the age
 def data_clean():
@@ -71,4 +78,5 @@ def model():
 
 
 data_clean()
-model()
+data_study()
+# model()
