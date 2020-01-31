@@ -45,4 +45,4 @@ train = pd.read_csv("data/train.csv")
 train['Cabin' ].isnull().sum().sum() #where train is our dataframe
 ```
 
-We have that 687 passengers have null Cabin. So, drop 687 passengers from the table is really not a good idea if you don't wanna lose most part of your train data. 
+So, 687 passengers have null Cabin. Then, dropping 687 passengers from the table isn't a good idea at all, only in case you wanna lose most part of your train data. 
