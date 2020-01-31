@@ -33,3 +33,16 @@ And in the end we have that the following columns can be null:
 
 So, the first step is to handle this null values. 
 
+### What to do 
+
+There are many ways to handle missing data. One of this ways is to drop the data from the table, but for this case this is not a good idea. With the following commands: 
+```sql 
+SELECT COUNT(PassengerId) FROM train WHERE Cabin IS NULL; # can be null
+```
+or
+```python
+train = pd.read_csv("data/train.csv")
+train['Cabin' ].isnull().sum().sum() #where train is our dataframe
+```
+
+We have that 687 passengers have null Cabin. So, drop 687 passengers from the table is really not a good idea if you don't wanna lose most part of your train data. 
