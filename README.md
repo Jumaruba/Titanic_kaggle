@@ -7,17 +7,17 @@ For analyses of the data python and SQL were used.
 First let's see what labels are missing information: 
 
 
-```sql=
-select COUNT(PassengerId) from test where Pclass is null;
-select COUNT(PassengerId) from test where Name is null;
-select COUNT(PassengerId) from test where sex is null;
-select COUNT(PassengerId) from test where age is null; # it can be null
-select COUNT(PassengerId) from test where SibSp is null;
-select COUNT(PassengerId) from test where Parch is null;
-select COUNT(PassengerId) from test where Ticket is null;
-select COUNT(PassengerId) from test where Fare is null or Fare = 0; # can be 0
-select COUNT(PassengerId) from test where Cabin is null; # can be null
-select COUNT(PassengerId) from test where Embarked is null; # can be null
+```sql
+SELECT COUNT(PassengerId) FROM test WHERE Pclass IS NULL;
+SELECT COUNT(PassengerId) FROM test WHERE Name IS NULL;
+SELECT COUNT(PassengerId) FROM test WHERE sex IS NULL;
+SELECT COUNT(PassengerId) FROM test WHERE age IS NULL; # it can be null
+SELECT COUNT(PassengerId) FROM test WHERE SibSp IS NULL;
+SELECT COUNT(PassengerId) FROM test WHERE Parch IS NULL;
+SELECT COUNT(PassengerId) FROM test WHERE Ticket IS NULL;
+SELECT COUNT(PassengerId) FROM test WHERE Fare IS NULL or Fare = 0; # can be 0
+SELECT COUNT(PassengerId) FROM test WHERE Cabin IS NULL; # can be null
+SELECT COUNT(PassengerId) FROM test WHERE Embarked IS NULL; # can be null
 ```
 
 For each command the result is none or something like: 
