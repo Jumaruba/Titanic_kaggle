@@ -23,7 +23,7 @@ ORDER BY Parch ASC;
 SELECT SUM(Survived), Parch, SibSp
 FROM train
 GROUP BY SibSp, Parch
-ORDER BY SUM(Survived) DESC
+ORDER BY SUM(Survived) DESC;
 # people with no parch and no sib has a tendency
 
 SELECT SUM(Survived), COUNT(PassengerId), Cabin, (SUM(Survived)/COUNT(PassengerId)) as Porcentage
@@ -38,13 +38,13 @@ ORDER BY Porcentage DESC;
 SELECT SUM(Survived) as Survivals, COUNT(PassengerID) as ID, Sex, (SUM(Survived)/COUNT(PassengerId)) as Percentage
 FROM train
 GROUP BY Sex
-ORDER BY Percentage DESC
+ORDER BY Percentage DESC;
 # 74% of the woman survived
 
 SELECT Pclass, SUM(Survived), COUNT(PassengerId), (SUM(Survived)/COUNT(PassengerId)) as Percentage
 FROM train
 GROUP BY Pclass
-ORDER BY Percentage DESC
+ORDER BY Percentage DESC;
 # People with higher class tends to survival
 
 SELECT Age, SUM(Survived), COUNT(PassengerId), (SUM(Survived)/COUNT(PassengerId)) as Percentage
@@ -55,7 +55,28 @@ ORDER BY Age DESC;
 SELECT Embarked, SUM(Survived), COUNT(PassengerId), (SUM(Survived)/COUNT(PassengerId)) as Percentage
 FROM train
 GROUP BY Embarked
-ORDER BY Percentage
+ORDER BY Percentage;
 
+#
+select avg(Survived) as Porcentage, count(PassengerId) as Number,
+    (case
+    when (Age >= 60) then 'old'
+    when (Age < 60 and Age >= 40) then 'adult'
+    when (Age < 40 and Age >= 20) then 'young adult'
+    when (Age >= 7 and Age < 20) then 'child'
+    when (Age < 7) then 'baby' else 'young adult'
+        end ) as New_Age
+from train
+group by New_Age
+order by Porcentage desc;
 
-
+select count(PassengerId) as Number, avg(Survived) as Porcentege,
+       (case
+        when (Fare > 0 and Fare <= 50) then '(0,50]'
+        when (Fare > 50 and Fare <= 100) then '(50,100]'
+        when (Fare > 100 and Fare <= 200) then '(100,200]'
+        when (Fare > 200) then '(200,inf]' else '0'
+           end) as Fare_
+from train
+group by Fare_
+order by Porcentege desc;

@@ -14,58 +14,58 @@ def data_study():
           ['Cabin'].isnull().sum())
     print(train['Age'].mean())
     corr = train.corr()
-    heat = sns.heatmap(corr, cmap=sns.diverging_palette(20, 220, n=200))
-    plt.savefig("graphics/heat_map.png")
+    print(corr.to_string())
+    train_grp = train.groupby('Fare')['Survived'].mean()
+    train_grp.plot()
+    plt.show()
+    plt.savefig("graphics/fare_survived.png")
+    # sns.heatmap(corr, cmap=sns.diverging_palette(20, 220, n=200))
+    # plt.savefig("graphics/heat_map.png")
 
 
 # conclusion: NA values: Age, Cabin, Embarked, Fare
 # setting the age
 def data_clean():
     for table in [train, test]:
-        table["Embarked"] = table["Embarked"].fillna("C")
+        table["Embarked"] = table["Embarked"].fillna("N")
         table["Age"].fillna(table["Age"].mean(), inplace=True)
-        table['Cabin'] = table["Cabin"].fillna("N")
 
         # Embarked variables
-        table["EmbarkedC"] = np.where(table["Embarked"] == 'C', True, False)
-        table["EmbarkedQ"] = np.where(table["Embarked"] == 'Q', True, False)
-        table["EmbarkedS"] = np.where(table["Embarked"] == 'S', True, False)
+        embarked = table["Embarked"]
+        table["Embarked_n"] = np.select([embarked == 'N', embarked == 'C', embarked == 'Q', embarked == 'S'],
+                                        [4, 3, 2, 1], default=1)
 
-        # Variables for classes
-        table["Class1"] = np.where(table["Pclass"] == 1, True, False)
-        table["Class2"] = np.where(table["Pclass"] == 2, True, False)
-        table["Class3"] = np.where(table["Pclass"] == 3, True, False)
+        # Variables for family
+        parch = table['Parch']
+        sib = table['SibSp']
+        table['FamilySize'] = parch + sib + 1
 
-        # Variables for siblings
-        table["Sib>1"] = np.where(table["SibSp"] > 1, True, False)  # variable more than one sibling
-        table["noSib"] = np.where(table["SibSp"], False, True)
+        # Variables for alone
+        table['isAlone'] = np.where(sib + parch == 0, True, False)
+        print(table.head().to_string())
 
+        # Variable age
+        age = table['Age']
+        table['Age'] = np.select([age >= 60, np.logical_and(age < 60, age >= 40), np.logical_and(age < 40, age >= 20),
+                                  np.logical_and(age >= 7, age < 20), age < 7], [1, 4, 2, 3, 5], default=2)
+
+        # Variable title
+
+        # Variable for fare
+        fare = table['Fare']
+        table['Fare_'] = np.select(
+            [np.logical_and(fare > 100, fare <= 200), fare > 200, np.logical_and(fare > 50, fare <= 100),
+             np.logical_and(fare > 0, fare <= 50), fare.isnull()], [5, 4, 3, 2, 1])
         # Treat Sex variable
         table["is-woman"] = np.where(table["Sex"] == "female", True, False)
 
-        # Variables for parch
-        table["noParch"] = np.where(table["Parch"] == 0, True, False)
-        table["Parch1or2"] = np.select([table["Parch"] == 1, table["Parch"] == 2], [True, True], default=False)
-        table["Parch>2"] = np.where(table["Parch"] > 2, True, False)
-
-        # # Relation no parch and no sib
-        # table["noSibParch"] = np.where(np.logical_and(table["noParch"], table["noSib"]), True, False)
-
         # Cabin variables
-        table["CabinBDE"] = np.select(
-            [table["Cabin"].str.contains('B'), table["Cabin"].str.contains("D"), table["Cabin"].str.contains("E")],
-            [True, True, True], default=False)
-        table["CabinCFG"] = np.select(
-            [table["Cabin"].str.contains("C"), table["Cabin"].str.contains("F"), table["Cabin"].str.contains("G")],
-            [True, True, True], default=False)
-        table["CabinA"] = np.where(table["Cabin"].str.contains("A"), True, False)
-        table["CabinTN"] = np.where(np.logical_or(table["Cabin"].str.contains("T"), table["Cabin"].str.contains("N")),
-                                    True, False)
+        table["hasCabin"] = np.where(np.logical_or(table['Cabin'].isnull(), table['Cabin'].isna()), False, True)
 
         table["Fare"] = table["Fare"].fillna(table["Fare"].mean())
-        table.drop(["Cabin", "Embarked", "Parch", "Sex", "Pclass", "SibSp"], axis=1, inplace=True)
+        table.drop(["Cabin", "Embarked", "Sex", "SibSp", "Ticket", 'Fare'], axis=1, inplace=True)
         # drop for now
-        table.drop(["Name", "Ticket"], axis=1, inplace=True)
+        table.drop(["Name"], axis=1, inplace=True)
 
 
 def model():
@@ -79,8 +79,8 @@ def model():
     frames = [prediction_1, test[test.columns[:1]]]
     result = frames[1].merge(frames[0], left_index=True, right_index=True)
     result = result.astype({'Survived': 'int'})
-    result.to_csv("result_1.csv", index=False)
-    print(model.score(test_x, test_y))
+    result.to_csv("result_2.csv", index=False)
+    print(model.score(train_x, train_y))
 
 
 data_study()
