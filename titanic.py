@@ -15,6 +15,7 @@ test_result = pd.read_csv("data/gender_submission.csv")
 # conclusion: NA values: Age, Cabin, Embarked, Fare
 # setting the age
 def data_clean():
+    print(train.head().to_string())
     for table in [train, test]:
         table["Embarked"] = table["Embarked"].fillna("N")
         table["Age"].fillna(table["Age"].mean(), inplace=True)
@@ -27,7 +28,7 @@ def data_clean():
         # Variables for family
         parch = table['Parch']
         sib = table['SibSp']
-        table['FamilySize'] = parch + sib + 1
+        #table['FamilySize'] = parch + sib + 1
 
         # Variables for alone
         table['isAlone'] = np.where(sib + parch == 0, True, False)
@@ -37,14 +38,22 @@ def data_clean():
         table['Age'] = np.select([age >= 60, np.logical_and(age < 60, age >= 40), np.logical_and(age < 40, age >= 20),
                                   np.logical_and(age >= 7, age < 20), age < 7], [1, 4, 2, 3, 5], default=2)
 
-        # Variable title
-        title = table['Name']
-        pattern_rev = 'Don|Rev'
-        pattern_mr = 'Mr'
-        pattern_dr = 'Dr.'
-        pattern_master = 'Master'
-        pattern_miss = 'Miss.|Ms.'
-        pattern_ladies = 'Mlle|Countess|Mme'
+        # Variable title - these titles don't improve the model
+
+        # title = table['Name']
+        # pattern_rev = 'Don|Rev'
+        # pattern_mr = 'Mr'
+        # pattern_dr = 'Dr.'
+        # pattern_master = 'Master'
+        # pattern_miss = 'Miss.|Ms.'
+        # pattern_ladies = 'Mlle|Countess|Mme'
+        # name = table['Name']
+        # table['Title'] = np.select(
+        #     [name.str.contains(pattern_rev, regex=True), name.str.contains(pattern_mr, regex=True),
+        #      name.str.contains(pattern_dr, regex=True),
+        #      name.str.contains(pattern_master, regex=True), name.str.contains(pattern_miss, regex=True),
+        #      name.str.contains(pattern_ladies, regex=True)], [1, 2, 4, 5, 6, 7], default=3)
+
         # Variable for fare
         fare = table['Fare']
         table['Fare_'] = np.select(
@@ -72,13 +81,13 @@ def data_clean():
             [3, 6, 1, 8, 5, 7, 4, 2], default=4)
 
         # Name length
-        table['name-length'] = table['Name'].apply(lambda x: len(x))
+        # table['name-length'] = table['Name'].apply(lambda x: len(x))
 
         # Cabin variables
         table["hasCabin"] = np.where(np.logical_or(table['Cabin'].isnull(), table['Cabin'].isna()), False, True)
 
         table["Fare"] = table["Fare"].fillna(table["Fare"].mean())
-        table.drop(["Cabin", "Embarked", "Sex", "SibSp", "Ticket", 'Fare'], axis=1, inplace=True)
+        table.drop(["Cabin", "Embarked", "Sex", "SibSp", "Ticket", 'Fare', 'Parch'], axis=1, inplace=True)
         # drop for now
         table.drop(["Name"], axis=1, inplace=True)
         print(table.head().to_string())
@@ -136,9 +145,6 @@ def randomForest():
     prediction = model.predict(test_x)
     output = pd.DataFrame({'PassengerId': test.PassengerId, 'Survived': prediction})
     output.to_csv('RandomForest_result1.csv', index=False)
-
-
-
 
 
 data_clean()

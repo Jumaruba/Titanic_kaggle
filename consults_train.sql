@@ -99,7 +99,7 @@ select avg(Survived) as Porcentege, count(PassengerId),
            end ) as Title_
 from train
 group by Title_
-order by Porcentege;
+order by Porcentege desc;
 
 select Name, Survived
 from train
