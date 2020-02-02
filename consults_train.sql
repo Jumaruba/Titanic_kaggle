@@ -80,3 +80,27 @@ select count(PassengerId) as Number, avg(Survived) as Porcentege,
 from train
 group by Fare_
 order by Porcentege desc;
+
+
+select avg(Survived) as Porcentege, count(PassengerId),
+       (case
+           when Name like '%Mr%' then 'MR'
+           when Name like '%Miss.%' then 'MISS'
+           when Name like '%Ms.%' then 'MISS'
+           when Name like '%Master.%' then 'MASTER'
+           when Name like '%Mrs%' then 'MRS'
+           when Name like '%Don.%' then 'DON'
+           when Name like '%Rev.%' then 'REV'
+           when Name like '%Dr.%' then 'DR'
+           when Name like '%Mlle%' then 'LADIES'
+           when Name like '%Countess.%' then 'LADIES'
+           when Name like '%Mme.%' then 'LADIES'
+           else 'OTHERS'
+           end ) as Title_
+from train
+group by Title_
+order by Porcentege;
+
+select Name, Survived
+from train
+where Name like '%Rev%'

@@ -2,12 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 
 train = pd.read_csv("data/train.csv")
 test = pd.read_csv("data/test.csv")
 test_result = pd.read_csv("data/gender_submission.csv")
-
 
 
 # conclusion: NA values: Age, Cabin, Embarked, Fare
@@ -36,7 +38,13 @@ def data_clean():
                                   np.logical_and(age >= 7, age < 20), age < 7], [1, 4, 2, 3, 5], default=2)
 
         # Variable title
-
+        title = table['Name']
+        pattern_rev = 'Don|Rev'
+        pattern_mr = 'Mr'
+        pattern_dr = 'Dr.'
+        pattern_master = 'Master'
+        pattern_miss = 'Miss.|Ms.'
+        pattern_ladies = 'Mlle|Countess|Mme'
         # Variable for fare
         fare = table['Fare']
         table['Fare_'] = np.select(
@@ -73,11 +81,12 @@ def data_clean():
         table.drop(["Cabin", "Embarked", "Sex", "SibSp", "Ticket", 'Fare'], axis=1, inplace=True)
         # drop for now
         table.drop(["Name"], axis=1, inplace=True)
+        print(table.head().to_string())
 
 
-
-def model():
-
+def model_linearRegression():
+    # score 0.7770
+    # Output the model
     train_x = train[train.columns[2:]]
     train_y = train[train.columns[1:2]]
     test_x = test[test.columns[1:]]
@@ -89,8 +98,50 @@ def model():
     result = frames[1].merge(frames[0], left_index=True, right_index=True)
     result = result.astype({'Survived': 'int'})
     result.to_csv("result_3.csv", index=False)
-    print(model.score(train_x, train_y))
+
+    # To print how good is how good is out model
+    print("--- LINEAR REGRESSION ---")
+    x_train, x_test, y_train, y_test = train_test_split(train, train_y, test_size=0.2)
+    model = LinearRegression().fit(x_train[x_train.columns[2:]], y_train)
+    x_test = x_test[x_test.columns[2:]]
+    print(model.score(x_test, y_test))
+
+
+def model_knn():
+    # score 0.65550
+    train_x = train[train.columns[2:]]
+    train_y = train[train.columns[1:2]]
+    test_x = test[test.columns[1:]]
+    test_y = test_result[test_result.columns[1:]]
+    knn = KNeighborsClassifier().fit(train_x, train_y)
+    knn_prediction = pd.DataFrame(knn.predict(test_x), columns=['Survived'])
+    knn_prediction = knn_prediction.round()
+    frames = [knn_prediction, test[test.columns[:1]]]
+    result = frames[1].merge(frames[0], left_index=True, right_index=True)
+    result.to_csv("result_knn.csv", index=False)
+    x_train, x_test, y_train, y_test = train_test_split(train, train_y, test_size=0.2)
+
+    print("--- KNN ---")
+    x_train, x_test, y_train, y_test = train_test_split(train, train_y, test_size=0.2)
+    model = KNeighborsClassifier().fit(x_train[x_train.columns[2:]], y_train)
+    x_test = x_test[x_test.columns[2:]]
+    print(model.score(x_test, y_test))
+
+
+def randomForest():
+    train_x = train[train.columns[2:]]
+    train_y = train[train.columns[1:2]]
+    test_x = test[test.columns[1:]]
+    model = RandomForestClassifier(n_estimators=100, max_depth=20, random_state=1).fit(train_x, train_y)
+    prediction = model.predict(test_x)
+    output = pd.DataFrame({'PassengerId': test.PassengerId, 'Survived': prediction})
+    output.to_csv('RandomForest_result1.csv', index=False)
+
+
+
 
 
 data_clean()
-model()
+model_linearRegression()
+model_knn()
+randomForest()
