@@ -9,19 +9,6 @@ test = pd.read_csv("data/test.csv")
 test_result = pd.read_csv("data/gender_submission.csv")
 
 
-def data_study():
-    print(train
-          ['Cabin'].isnull().sum())
-    print(train['Age'].mean())
-    corr = train.corr()
-    print(corr.to_string())
-    train_grp = train.groupby('Fare')['Survived'].mean()
-    train_grp.plot()
-    plt.show()
-    plt.savefig("graphics/fare_survived.png")
-    # sns.heatmap(corr, cmap=sns.diverging_palette(20, 220, n=200))
-    # plt.savefig("graphics/heat_map.png")
-
 
 # conclusion: NA values: Age, Cabin, Embarked, Fare
 # setting the age
@@ -42,7 +29,6 @@ def data_clean():
 
         # Variables for alone
         table['isAlone'] = np.where(sib + parch == 0, True, False)
-        print(table.head().to_string())
 
         # Variable age
         age = table['Age']
@@ -59,6 +45,27 @@ def data_clean():
         # Treat Sex variable
         table["is-woman"] = np.where(table["Sex"] == "female", True, False)
 
+        # Variable for tickets
+        ticket = table['Ticket']
+        pattern_SC = "^(SC)"
+        pattern_A = "^(A)"
+        pattern_PC = "^(PC)"
+        pattern_STON = "^(SOTON)|^(STON)"
+        pattern_length_4 = "^[0-9]{3,4}$"
+        pattern_length_5 = "^[0-9]{5}$"
+        pattern_length_6 = "^[0-9]{6}$"
+        pattern_length_7 = "^[0-9]{7,9}$"
+        table['ticket_new'] = np.select(
+            [ticket.str.contains(pattern_STON, regex=True), ticket.str.contains(pattern_SC, regex=True),
+             ticket.str.contains(pattern_A, regex=True),
+             ticket.str.contains(pattern_PC, regex=True), ticket.str.contains(pattern_length_4, regex=True),
+             ticket.str.contains(pattern_length_5, regex=True),
+             ticket.str.contains(pattern_length_6, regex=True), ticket.str.contains(pattern_length_7, regex=True)],
+            [3, 6, 1, 8, 5, 7, 4, 2], default=4)
+
+        # Name length
+        table['name-length'] = table['Name'].apply(lambda x: len(x))
+
         # Cabin variables
         table["hasCabin"] = np.where(np.logical_or(table['Cabin'].isnull(), table['Cabin'].isna()), False, True)
 
@@ -68,7 +75,9 @@ def data_clean():
         table.drop(["Name"], axis=1, inplace=True)
 
 
+
 def model():
+
     train_x = train[train.columns[2:]]
     train_y = train[train.columns[1:2]]
     test_x = test[test.columns[1:]]
@@ -79,10 +88,9 @@ def model():
     frames = [prediction_1, test[test.columns[:1]]]
     result = frames[1].merge(frames[0], left_index=True, right_index=True)
     result = result.astype({'Survived': 'int'})
-    result.to_csv("result_2.csv", index=False)
+    result.to_csv("result_3.csv", index=False)
     print(model.score(train_x, train_y))
 
 
-data_study()
 data_clean()
 model()
