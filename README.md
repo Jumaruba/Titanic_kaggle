@@ -3,6 +3,8 @@
 This is a repository that predicts, based on the information given, if a person would survive the titanic disaster.  
 For analyses of the data python and SQL were used.   
 The readme is still in development as so the code.  
+Site: [Titanic](https://www.kaggle.com/c/titanic)
+
 ## Analysing data: null values
 
 First let's see what labels are missing information: 
