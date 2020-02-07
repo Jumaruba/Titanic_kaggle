@@ -1,15 +1,15 @@
 # Titanic
 
 This is a repository that predicts, based on the information given, if a person would survive the Titanic disaster.  
-For analyses of the data python and SQL were used.
+For analyses of the data python and SQL were used.  
 **Warning:** The readme is still in development as so the code.  
 **Site:** [Titanic](https://www.kaggle.com/c/titanic)  
-**Source Code:** [Code](https://github.com/Jumaruba/Titanic_kaggle/blob/master/titanic.py)
-**Algorithm:** Linear Regression
-**Score:** 0.7790  
-
-__Atention:__ At this repository, there're many different codes for different tries. Only one or a few codes are going to be mentioned at this README. Also, this respository is in constant development. Time to time new algorithms and methods are applied to achieve better results and then this README file is changed. 
-__Atention2:__ Consults to the data files were also done using sql in the file `consults_train.sql`
+**Source Code:** [Code](https://github.com/Jumaruba/Titanic_kaggle/blob/master/titanic.py)  
+**Algorithm:** Linear Regression  
+**Score:** 0.7790    
+  
+__Atention:__ At this repository, there're many different codes for different tries. Only one or a few codes are going to be mentioned at this README. Also, this respository is in constant development. Time to time new algorithms and methods are applied to achieve better results and then this README file is changed.   
+__Atention2:__ Consults to the data files were also done using sql in the file `consults_train.sql`  
 
 ## Import libraries
 
@@ -36,7 +36,6 @@ test_result = pd.read_csv("data/gender_submission.csv") # test result table
 
 First, let's see what labels are missing information:
 
-or you can check simply do:
 ```python 
 for table in [train, test]:
     print(train.isnull().sum())
