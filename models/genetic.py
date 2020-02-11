@@ -8,6 +8,7 @@ from deap import creator
 from deap import base 
 from deap import tools 
 import pandas as pd 
+from sklearn.metrics import accuracy_score
 import numpy as np
 
 HOWMANYITER = 10
@@ -16,7 +17,7 @@ HOWMANYITER = 10
 train = pd.read_csv("./data/train.csv") 
 test = pd.read_csv("./data/test.csv")
 test_2 = pd.read_csv("./data/test.csv")
-
+survived = train.Survived
 # we wanna transform this np array in values of 1 and 0 
 def sigmoid(arr): 
     return np.round(1. - 1./(1. + np.exp(arr)))
@@ -133,25 +134,6 @@ def cleanData(df):
         [np.logical_and(fare > 100, fare <= 200), fare > 200, np.logical_and(fare > 50, fare <= 100),
         np.logical_and(fare > 0, fare <= 50), fare.isnull()], [5, 4, 3, 2, 1])
     
-    
-    # analysing the ticket ---- 
-
-    ticket = df['Ticket']
-    pattern_SC = "^(SC)"
-    pattern_A = "^(A)"
-    pattern_PC = "^(PC)"
-    pattern_STON = "^(SOTON)|^(STON)"
-    pattern_length_4 = "^[0-9]{3,4}$"
-    pattern_length_5 = "^[0-9]{5}$"
-    pattern_length_6 = "^[0-9]{6}$"
-    pattern_length_7 = "^[0-9]{7,9}$"
-    df['Ticket'] = np.select(
-        [ticket.str.contains(pattern_STON, regex=True), ticket.str.contains(pattern_SC, regex=True),
-            ticket.str.contains(pattern_A, regex=True),
-            ticket.str.contains(pattern_PC, regex=True), ticket.str.contains(pattern_length_4, regex=True),
-            ticket.str.contains(pattern_length_5, regex=True),
-            ticket.str.contains(pattern_length_6, regex=True), ticket.str.contains(pattern_length_7, regex=True)],
-        [3, 6, 1, 8, 5, 7, 4, 2], default=4)
 
     # analysing age ----
 
@@ -159,30 +141,25 @@ def cleanData(df):
     df['Age'] = np.select([age >= 60, np.logical_and(age < 60, age >= 40), np.logical_and(age < 40, age >= 20),
                                 np.logical_and(age >= 7, age < 20), age < 7], [1, 4, 2, 3, 5], default=2)
 
-    # analysing titles ----
 
-    title = df['Name']
-    pattern_rev = 'Don|Rev'
-    pattern_mr = 'Mr'
-    pattern_dr = 'Dr.'
-    pattern_master = 'Master'
-    pattern_miss = 'Miss.|Ms.'
-    pattern_ladies = 'Mlle|Countess|Mme'
-    name = df['Name']
-    df['Name'] = np.select(
-        [name.str.contains(pattern_rev, regex=True), name.str.contains(pattern_mr, regex=True),
-         name.str.contains(pattern_dr, regex=True),
-         name.str.contains(pattern_master, regex=True), name.str.contains(pattern_miss, regex=True),
-         name.str.contains(pattern_ladies, regex=True)], [1, 2, 4, 5, 6, 7], default=3)
-
+    df.drop(['Name'], inplace = True, axis = 1)
+    df.drop(['Ticket'], inplace = True, axis = 1)
     return df 
 
 object_data = cleanData(train)
 object_test = cleanData(test)
-object_data = gp_deap(object_data)
+function_data = gp_deap(object_data)
+
+#verifying how good our model is 
+train_array = object_data.values.tolist()
+train_array = sigmoid(np.array([function_data(*x) for x in train_array]))
+print("Score for the train: ")
+print(accuracy_score(survived.astype(int), train_array.astype(int)))
+# Best score for the train:
+# 0.8002244668911336
 
 object_test.drop(['PassengerId'], axis = 1, inplace = True) 
 test_array = object_test.values.tolist()
-testPrediction = sigmoid(np.array([object_data(*x) for x in test_array]))
+testPrediction = sigmoid(np.array([function_data(*x) for x in test_array]))
 result = pd.DataFrame({'PassengerId': test_2['PassengerId'].astype(int), 'Survived': testPrediction.astype(int)})
 result.to_csv("genetic_prediction.csv", index = False)
