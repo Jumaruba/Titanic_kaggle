@@ -4,13 +4,15 @@ This is a repository that predicts, based on the information given, if a person 
 For analyses of the data python and SQL were used.  
 **Warning:** The readme is still in development as so the code.  
 **Site:** [Titanic](https://www.kaggle.com/c/titanic)  
-**Source Code:** [Code](https://github.com/Jumaruba/Titanic_kaggle/blob/master/titanic.py)  
-**Algorithm:** Linear Regression  
-**Score:** 0.7790  
+**Source Code 1:** [Linear Regression](https://github.com/Jumaruba/Titanic_kaggle/blob/master/titanic.py)  
+**Source Code 2:** [Genetic Programming](https://github.com/Jumaruba/Titanic_kaggle/blob/master/models/genetic.py)
+**Score Linear Regression:** 0.7790  
+**Score Genetic Programming:** 0.76076
   
 __Atention:__ At this repository, there're many different codes for different tries. Only one or a few codes are going to be mentioned at this README. Also, this respository is in constant development. Time to time new algorithms and methods are applied to achieve better results and then this README file is changed.   
 __Atention2:__ Consults to the data files were also done using sql in the file `consults_train.sql`  
 
+# Code for linear Regression
 ## Import libraries
 
 ```python
@@ -227,5 +229,30 @@ def model_linearRegression():
     result = frames[1].merge(frames[0], left_index=True, right_index=True)  #Adding the PassengerId to the talbe
     result = result.astype({'Survived': 'int'}) #Changing the survived table to integer
     result.to_csv("result_3.csv", index=False) #Transforming the result in cvs
+```
+
+# Code for genetic programming
+
+Before readen this section, it's important you know some concepts about genetic programming. If you don't, it's recommended read the first three chapters of this book: [A Field Guide to
+Genetic Programming](http://www0.cs.ucl.ac.uk/staff/ucacbbl/ftp/papers/poli08_fieldguide.pdf).  
+Also, this code was inspired in this [notebook](https://www.kaggle.com/guesejustin/91-genetic-algorithms-explained-using-geap).  
+
+## Libraries used 
+
+- [Deap](https://deap.readthedocs.io/en/master/): library to build your genetic program. 
+- Pandas 
+- Numpy 
+
+```python
+import operator 
+import math 
+import random 
+from deap import algorithms 
+from deap import gp 
+from deap import creator 
+from deap import base 
+from deap import tools 
+import pandas as pd 
+import numpy as np
 ```
 
