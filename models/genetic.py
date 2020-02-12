@@ -10,6 +10,7 @@ from deap import tools
 import pandas as pd 
 from sklearn.metrics import accuracy_score
 import numpy as np
+from scipy import stats
 
 HOWMANYITER = 10
 
@@ -18,6 +19,12 @@ train = pd.read_csv("./data/train.csv")
 test = pd.read_csv("./data/test.csv")
 test_2 = pd.read_csv("./data/test.csv")
 survived = train.Survived
+
+def handle_outliers(df): 
+    # removing outliers from fare 
+    train.Fare.where(np.abs(stats.zscore(train.Fare)) < 3, inplace = True)
+    return df 
+
 # we wanna transform this np array in values of 1 and 0 
 def sigmoid(arr): 
     return np.round(1. - 1./(1. + np.exp(arr)))
@@ -127,9 +134,14 @@ def cleanData(df):
     # print(df[['Embarked', 'Survived']].groupby('Embarked').mean())
     
     df.Embarked = np.select([df.Embarked == 'C', df.Embarked == 'Q', df.Embarked == 'S'], [3,2,1]) 
-    
+
     # analysing fare ----
     fare = df['Fare']
+    # df.Fare.loc[np.logical_and(fare>100, fare<=200)] = 5 
+    # df.Fare.loc[np.logical_and(fare>200)] = 4 
+    # df.Fare.loc[np.logical_and(fare>50, fare <= 100)] = 3 
+    # df.Fare.loc[np.logical_and(fare>0, fare<= 50)] = 12
+    # df.Fare.loc[fare.isnull()] = 1
     df['Fare'] = np.select(
         [np.logical_and(fare > 100, fare <= 200), fare > 200, np.logical_and(fare > 50, fare <= 100),
         np.logical_and(fare > 0, fare <= 50), fare.isnull()], [5, 4, 3, 2, 1])
@@ -144,8 +156,10 @@ def cleanData(df):
 
     df.drop(['Name'], inplace = True, axis = 1)
     df.drop(['Ticket'], inplace = True, axis = 1)
+
     return df 
 
+# train = handle_outliers(train)
 object_data = cleanData(train)
 object_test = cleanData(test)
 function_data = gp_deap(object_data)
