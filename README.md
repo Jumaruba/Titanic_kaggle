@@ -4,7 +4,7 @@ This is a repository that predicts, based on the information given, if a person 
 For analyses of the data python and SQL were used.  
 **Warning:** The readme is still in development as so the code.  
 **Site:** [Titanic](https://www.kaggle.com/c/titanic)  
-**Source Code 1:** [Linear Regression](https://github.com/Jumaruba/Titanic_kaggle/blob/master/titanic.py)  
+**Source Code 1:** [Linear Regression](https://github.com/Jumaruba/Titanic_kaggle/blob/master/models/titanic.py)  
 **Source Code 2:** [Genetic Programming](https://github.com/Jumaruba/Titanic_kaggle/blob/master/models/genetic.py)
 **Score Linear Regression:** 0.7790  
 **Score Genetic Programming:** 0.76076
