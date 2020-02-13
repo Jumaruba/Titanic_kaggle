@@ -7,9 +7,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 
-train = pd.read_csv("data/train.csv")
-test = pd.read_csv("data/test.csv")
-test_result = pd.read_csv("data/gender_submission.csv")
+train = pd.read_csv("./data/train.csv")
+test = pd.read_csv("./data/test.csv")
+test_result = pd.read_csv("./data/gender_submission.csv")
 
 
 # conclusion: NA values: Age, Cabin, Embarked, Fare
@@ -37,22 +37,6 @@ def data_clean():
         age = table['Age']
         table['Age'] = np.select([age >= 60, np.logical_and(age < 60, age >= 40), np.logical_and(age < 40, age >= 20),
                                   np.logical_and(age >= 7, age < 20), age < 7], [1, 4, 2, 3, 5], default=2)
-
-        # Variable title - these titles don't improve the model
-
-        # title = table['Name']
-        # pattern_rev = 'Don|Rev'
-        # pattern_mr = 'Mr'
-        # pattern_dr = 'Dr.'
-        # pattern_master = 'Master'
-        # pattern_miss = 'Miss.|Ms.'
-        # pattern_ladies = 'Mlle|Countess|Mme'
-        # name = table['Name']
-        # table['Title'] = np.select(
-        #     [name.str.contains(pattern_rev, regex=True), name.str.contains(pattern_mr, regex=True),
-        #      name.str.contains(pattern_dr, regex=True),
-        #      name.str.contains(pattern_master, regex=True), name.str.contains(pattern_miss, regex=True),
-        #      name.str.contains(pattern_ladies, regex=True)], [1, 2, 4, 5, 6, 7], default=3)
 
         # Variable for fare
         fare = table['Fare']

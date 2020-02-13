@@ -126,22 +126,16 @@ def cleanData(df):
     # after analysing we have
     exp = [df.Cabin == 'D',df.Cabin == 'E',df.Cabin== 'B', df.Cabin == 'C', df.Cabin == 'F',df.Cabin == 'G', df.Cabin == 'A',df.Cabin == 'N', df.Cabin == 'T']
     df.Cabin  = np.select(exp, [4,4,4,3,3,2,2,1,1])
-
+    #df.Cabin  = np.select(exp, [4,4,4,3,3,2,2,1,1])
     # analysing sex ----
     df.Sex = np.where(df.Sex == 'female',1,0)
     
     # analysing embarked ----
-    # print(df[['Embarked', 'Survived']].groupby('Embarked').mean())
     
     df.Embarked = np.select([df.Embarked == 'C', df.Embarked == 'Q', df.Embarked == 'S'], [3,2,1]) 
 
     # analysing fare ----
     fare = df['Fare']
-    # df.Fare.loc[np.logical_and(fare>100, fare<=200)] = 5 
-    # df.Fare.loc[np.logical_and(fare>200)] = 4 
-    # df.Fare.loc[np.logical_and(fare>50, fare <= 100)] = 3 
-    # df.Fare.loc[np.logical_and(fare>0, fare<= 50)] = 12
-    # df.Fare.loc[fare.isnull()] = 1
     df['Fare'] = np.select(
         [np.logical_and(fare > 100, fare <= 200), fare > 200, np.logical_and(fare > 50, fare <= 100),
         np.logical_and(fare > 0, fare <= 50), fare.isnull()], [5, 4, 3, 2, 1])
@@ -152,6 +146,7 @@ def cleanData(df):
     age = df['Age']
     df['Age'] = np.select([age >= 60, np.logical_and(age < 60, age >= 40), np.logical_and(age < 40, age >= 20),
                                 np.logical_and(age >= 7, age < 20), age < 7], [1, 4, 2, 3, 5], default=2)
+
 
 
     df.drop(['Name'], inplace = True, axis = 1)
